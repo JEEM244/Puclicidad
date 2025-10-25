@@ -1,0 +1,644 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>EduTrack — Estética avanzada</title>
+<meta name="description" content="Página informativa de EduTrack con diseño visual avanzado usando CSS, SVG, Canvas y técnicas sin CSS externo." />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Space+Grotesk:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* =========================
+   DESIGN TOKENS + THEME
+   ========================= */
+:root{
+  --bg: #071428;
+  --panel: linear-gradient(180deg,#071226,#061121);
+  --glass: rgba(255,255,255,0.04);
+  --muted: #9fb3c8;
+  --text: #eaf6ff;
+  --accent-a: #06b6d4;
+  --accent-b: #7c3aed;
+  --good: #16a34a;
+  --warn: #f59e0b;
+  --bad: #ef4444;
+  --radius: 14px;
+  --shadow-lg: 0 20px 60px rgba(0,0,0,0.6);
+  --shadow-md: 0 10px 30px rgba(0,0,0,0.45);
+  --glass-2: rgba(255,255,255,0.02);
+  --mono: "Space Grotesk", Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+  --max-w: 1400px;
+  --ui-duration: 260ms;
+}
+
+/* Light theme variables (toggle via [data-theme="light"] on <html>) */
+:root[data-theme="light"]{
+  --bg: #f6fbff;
+  --panel: linear-gradient(180deg,#ffffff,#f7fbff);
+  --glass: rgba(2,18,38,0.03);
+  --muted: #2b4756;
+  --text: #042233;
+  --shadow-lg: 0 12px 30px rgba(2,18,38,0.06);
+  --shadow-md: 0 8px 18px rgba(2,18,38,0.04);
+}
+
+/* =========================
+   RESET + BASE
+   ========================= */
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--mono);-webkit-font-smoothing:antialiased;scroll-behavior:smooth}
+a{color:inherit}
+.wrap{max-width:var(--max-w);margin:28px auto;padding:20px}
+
+/* =========================
+   BACKDROP & LAYERS
+   ========================= */
+#bgCanvas{position:fixed;inset:0;z-index:0;pointer-events:none;mix-blend-mode:screen;opacity:0.95}
+svg#patternDefs{position:absolute;width:0;height:0}
+
+/* Glass shell for main panels (backdrop-filter when supported) */
+.shell{
+  position:relative;z-index:5;padding:18px;border-radius:18px;
+  background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));
+  border:1px solid var(--glass);box-shadow:var(--shadow-md);
+  backdrop-filter: blur(6px) saturate(110%);
+}
+
+/* =========================
+   HEADER
+   ========================= */
+.header{display:flex;align-items:center;gap:18px;padding:18px;border-radius:18px;background:linear-gradient(90deg,var(--accent-a),var(--accent-b));box-shadow:var(--shadow-lg);position:relative;z-index:8;overflow:visible}
+.logo-wrap{display:flex;align-items:center;gap:12px}
+.logo-badge{width:92px;height:92px;border-radius:18px;display:grid;place-items:center;background:conic-gradient(from 180deg, rgba(124,58,237,0.95), rgba(6,182,212,0.95));box-shadow:0 12px 40px rgba(2,18,38,0.25)}
+.logo-badge svg{width:62px;height:62px}
+.site-title{font-size:22px;font-weight:800;letter-spacing:0.2px}
+.site-sub{color:rgba(2,18,38,0.7);font-weight:700;font-size:13px}
+
+/* top nav */
+.top-nav{margin-left:auto;display:flex;gap:10px;align-items:center}
+.btn{padding:10px 12px;border-radius:12px;font-weight:800;border:1px solid rgba(255,255,255,0.03);background:rgba(255,255,255,0.03);cursor:pointer;transition:all var(--ui-duration) ease}
+.btn:hover{transform:translateY(-4px);box-shadow:0 12px 30px rgba(0,0,0,0.3)}
+.btn.primary{background:linear-gradient(90deg,var(--accent-a),var(--accent-b));color:#021026;box-shadow:0 12px 30px rgba(2,18,38,0.2)}
+
+/* ribbon style label using CSS counter */
+.ribbon{position:relative;padding:6px 12px;border-radius:999px;background:linear-gradient(90deg,rgba(255,255,255,0.04),transparent);font-weight:700;color:var(--muted);border:1px solid var(--glass)}
+
+/* =========================
+   HERO
+   ========================= */
+.hero{display:grid;grid-template-columns:1fr 380px;gap:20px;margin-top:20px;align-items:stretch}
+@media(max-width:980px){.hero{grid-template-columns:1fr}}
+.hero-card{padding:22px;border-radius:16px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border:1px solid var(--glass);box-shadow:var(--shadow-md)}
+.hero-title{font-size:30px;font-weight:800;line-height:1.02;margin-bottom:8px}
+.hero-desc{color:var(--muted);font-weight:600;margin-bottom:12px}
+.pills{display:flex;gap:10px;flex-wrap:wrap}
+
+/* animated accent underline (pseudo element) */
+.hero-title{position:relative}
+.hero-title::after{content:'';position:absolute;left:0;bottom:-8px;height:6px;width:80px;border-radius:999px;background:linear-gradient(90deg,var(--accent-a),var(--accent-b));box-shadow:0 6px 22px rgba(2,18,38,0.12);transform:translateY(6px);opacity:0;transition:all 420ms ease}
+.hero-card:hover .hero-title::after{transform:translateY(0);opacity:1}
+
+/* =========================
+   MAIN GRID
+   ========================= */
+.main-grid{display:grid;grid-template-columns:1fr 420px;gap:20px;margin-top:20px}
+@media(max-width:980px){.main-grid{grid-template-columns:1fr}}
+.panel{padding:18px;border-radius:14px;background:var(--panel);border:1px solid var(--glass);box-shadow:var(--shadow-md);position:relative}
+.h3{font-size:20px;margin-bottom:10px}
+
+/* features grid with subtle motion on hover using transform + filter */
+.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media(max-width:980px){.features-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.features-grid{grid-template-columns:1fr}}
+.feature-card{padding:14px;border-radius:12px;background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);border:1px solid rgba(255,255,255,0.03);transition:transform var(--ui-duration) cubic-bezier(.2,.9,.3,1), filter var(--ui-duration)}
+.feature-card:hover{transform:translateY(-8px) rotateZ(-0.6deg);filter:drop-shadow(0 20px 40px rgba(0,0,0,0.6))}
+
+/* =========================
+   Poster preview (inline gradients + SVG fills via data-attr)
+   ========================= */
+.poster-preview{padding:12px;border-radius:12px;background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);border:1px solid rgba(255,255,255,0.03)}
+.grade-row{display:flex;align-items:center;gap:12px;margin:10px 0}
+.grade-label{width:90px;font-weight:700}
+.grade-bar{flex:1;height:16px;border-radius:999px;background:linear-gradient(90deg,rgba(255,255,255,0.02),transparent);overflow:hidden;position:relative}
+.grade-fill{height:100%;width:0;text-align:right;padding-right:8px;font-weight:800;color:#021026;border-radius:999px;transition:width 900ms cubic-bezier(.2,.9,.3,1)}
+
+/* =========================
+   SIMULATOR (controls styled with inline attributes + CSS enhancements)
+   ========================= */
+.simulator{margin-top:16px;padding:12px;border-radius:12px;background:linear-gradient(145deg,#071226,#061121);box-shadow:var(--shadow-md)}
+.sim-grid{display:grid;grid-template-columns:1fr 320px;gap:12px}
+@media(max-width:980px){.sim-grid{grid-template-columns:1fr}}
+.inputs{display:flex;flex-direction:column;gap:10px}
+.row{display:flex;gap:10px;align-items:center}
+.row input{padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit}
+.row button{padding:8px 10px;border-radius:8px;border:none;background:linear-gradient(90deg,var(--accent-a),var(--accent-b));color:#021026;font-weight:800;cursor:pointer}
+.controls{display:flex;gap:8px;margin-top:12px}
+
+/* =========================
+   FAQ accordion + timeline
+   ========================= */
+.faq .item{margin-bottom:10px;border-radius:10px;background:rgba(255,255,255,0.02);overflow:hidden}
+.faq .q{padding:12px;display:flex;justify-content:space-between;align-items:center;cursor:pointer}
+.faq .a{padding:12px;border-top:1px solid rgba(255,255,255,0.02);display:none}
+.faq .a.open{display:block}
+
+/* timeline */
+.timeline{display:flex;flex-direction:column;gap:10px}
+.milestone{display:flex;gap:12px;align-items:flex-start}
+.milestone .dot{width:14px;height:14px;border-radius:50%;background:linear-gradient(90deg,var(--accent-a),var(--accent-b));box-shadow:0 8px 18px rgba(0,0,0,0.35);margin-top:6px}
+
+/* =========================
+   FOOTER
+   ========================= */
+.footer{margin-top:24px;text-align:center;color:var(--muted);font-size:13px;padding:18px;border-radius:12px;background:linear-gradient(180deg,rgba(255,255,255,0.01),transparent);border:1px solid var(--glass)}
+
+/* =========================
+   SMALL SCREEN UTILS
+   ========================= */
+@media(max-width:560px){
+  .logo-badge{width:64px;height:64px}
+  .hero-title{font-size:22px}
+}
+
+/* reduced motion */
+@media(prefers-reduced-motion:reduce){
+  *{transition:none!important;animation:none!important}
+}
+</style>
+</head>
+<body data-theme="dark">
+
+<!-- Canvas dynamic background (visual styling without extra CSS files) -->
+<canvas id="bgCanvas" aria-hidden="true"></canvas>
+
+<!-- Inline SVG defs (gradients, filters, shapes) used by HTML elements -->
+<svg id="patternDefs" aria-hidden="true">
+  <defs>
+    <linearGradient id="accentGrad" x1="0" x2="1">
+      <stop offset="0" stop-color="#06b6d4"/>
+      <stop offset="1" stop-color="#7c3aed"/>
+    </linearGradient>
+    <filter id="softShadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="12" stdDeviation="18" flood-color="#000" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+</svg>
+
+<div class="wrap">
+  <!-- HEADER -->
+  <header class="header" role="banner" aria-label="Cabecera EduTrack">
+    <div class="logo-wrap">
+      <div class="logo-badge" aria-hidden="true">
+        <!-- inline SVG logo for full styling control -->
+        <svg viewBox="0 0 120 120" width="62" height="62" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <defs>
+            <linearGradient id="lg" x1="0" x2="1"><stop offset="0" stop-color="#7c3aed"/><stop offset="1" stop-color="#06b6d4"/></linearGradient>
+          </defs>
+          <rect x="6" y="6" width="108" height="108" rx="18" fill="url(#lg)"></rect>
+          <text x="60" y="78" font-family="Space Grotesk, Inter, sans-serif" font-weight="800" font-size="44" text-anchor="middle" fill="#021026">ET</text>
+        </svg>
+      </div>
+      <div>
+        <div class="site-title">EduTrack</div>
+        <div class="site-sub">Información y control de tu rendimiento académico</div>
+      </div>
+    </div>
+
+    <nav class="top-nav" role="navigation" aria-label="Navegación principal">
+      <button class="btn">Características</button>
+      <button class="btn">Hoja de ruta</button>
+      <button class="btn">FAQ</button>
+      <button class="btn primary">Recibir info</button>
+    </nav>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero" role="region" aria-labelledby="hero-title">
+    <div class="hero-card shell">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
+        <div style="max-width:760px">
+          <h2 class="hero-title" id="hero-title">Prepárate para EduTrack — tu tablero de rendimiento</h2>
+          <p class="hero-desc">Visualizaciones claras, alertas accionables, y control total sobre tus datos. Diseñado para estudiantes y tutores.</p>
+          <div class="pills">
+            <div class="ribbon">Privacidad por diseño</div>
+            <div class="ribbon">Accesible</div>
+            <div class="ribbon">Documentado</div>
+          </div>
+        </div>
+        <div style="min-width:220px;align-self:center">
+          <!-- stylized info block with SVG accent -->
+          <div style="padding:12px;border-radius:12px;background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);border:1px solid rgba(255,255,255,0.03)">
+            <div class="small" style="margin-bottom:6px">Lanzamiento estimado</div>
+            <div style="font-weight:800;font-size:18px;color:var(--text)">1 año y medio</div>
+            <div style="height:10px"></div>
+            <div class="small" id="visitCounter">Visitas: 0</div>
+            <div class="small" id="countdown" style="margin-top:6px">Lanzamiento en: -- días --:--:--</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MAIN -->
+  <main class="main-grid" role="main" aria-label="Contenido principal">
+    <section>
+      <div class="panel shell">
+        <h3 class="h3">Qué hará EduTrack</h3>
+        <p class="small">Descripción detallada de características pensadas para mejorar la experiencia educativa.</p>
+
+        <div class="features-grid" style="margin-top:14px">
+          <div class="feature-card">
+            <h4>Resumen por materia</h4>
+            <p class="small">Promedios, tendencia, y detalle por evaluación para entender tu desempeño.</p>
+          </div>
+          <div class="feature-card">
+            <h4>Alertas inteligentes</h4>
+            <p class="small">Umbrales configurables y pasos prácticos para mejorar.</p>
+          </div>
+          <div class="feature-card">
+            <h4>Simulador informativo</h4>
+            <p class="small">Prueba escenarios locales y exporta resultados sin compartir datos.</p>
+          </div>
+          <div class="feature-card">
+            <h4>Privacidad</h4>
+            <p class="small">Controles claros sobre qué datos se usan y cómo se almacenan.</p>
+          </div>
+          <div class="feature-card">
+            <h4>Accesibilidad</h4>
+            <p class="small">Contraste, navegación por teclado y compatibilidad con lectores de pantalla.</p>
+          </div>
+          <div class="feature-card">
+            <h4>Documentación</h4>
+            <p class="small">Explicaciones paso a paso sobre cálculos y políticas de privacidad.</p>
+          </div>
+        </div>
+
+        <!-- SIMULATOR -->
+        <div class="simulator" style="margin-top:18px" id="simulator">
+          <h4 style="margin-bottom:8px">Simulador informativo</h4>
+          <p class="small" style="margin-bottom:12px">Ajusta materias y calificaciones para ver cómo cambiaría tu promedio. Solo local y solo informativo.</p>
+
+          <div class="sim-grid">
+            <div>
+              <div class="inputs" id="inputs"></div>
+
+              <div class="controls" style="margin-top:12px">
+                <button id="addSubject" class="btn">+ Materia</button>
+                <button id="runCalc" class="btn primary">Calcular y Mostrar</button>
+                <button id="exportCSV" class="btn">Exportar CSV</button>
+              </div>
+              <div class="small" style="margin-top:12px">Promedio: <strong id="avgVal">—</strong> — Riesgos: <strong id="riskVal">—</strong></div>
+            </div>
+
+            <aside class="panel" style="padding:12px">
+              <div id="chartWrap" style="border-radius:10px;overflow:hidden;background:linear-gradient(180deg,#081222,#06101a);border:1px solid rgba(255,255,255,0.03);height:220px;display:flex;align-items:center;justify-content:center">
+                <canvas id="chartCanvas" width="320" height="220" style="width:100%;height:220px;display:block"></canvas>
+              </div>
+              <div class="small" style="margin-top:8px">Gráfica ilustrativa dibujada con Canvas nativo (sin dependencias).</div>
+            </aside>
+          </div>
+        </div>
+      </div>
+
+      <div style="height:16px"></div>
+
+      <div class="panel shell">
+        <h3>Hoja de ruta</h3>
+        <div class="timeline" style="margin-top:12px">
+          <div class="milestone"><div class="dot"></div><div class="card"><strong>Fase 1</strong><p class="small">Investigación y prototipado.</p></div></div>
+          <div class="milestone"><div class="dot"></div><div class="card"><strong>Fase 2</strong><p class="small">Simulador y documentación.</p></div></div>
+          <div class="milestone"><div class="dot"></div><div class="card"><strong>Fase 3</strong><p class="small">Lanzamiento y accesibilidad completa.</p></div></div>
+        </div>
+      </div>
+
+      <div style="height:16px"></div>
+
+      <div class="panel shell" id="faq">
+        <h3>Preguntas frecuentes</h3>
+        <div class="faq" style="margin-top:12px">
+          <div class="item">
+            <div class="q">¿EduTrack almacenará mis contraseñas? <span>&#9656;</span></div>
+            <div class="a">No. Esta es una página informativa; la app final será explícita sobre privacidad y no retendrá credenciales.</div>
+          </div>
+          <div class="item">
+            <div class="q">¿Puedo desactivar alertas? <span>&#9656;</span></div>
+            <div class="a">Sí, las alertas serán opt-in y configurables por materia.</div>
+          </div>
+          <div class="item">
+            <div class="q">¿Se compartirá mi información? <span>&#9656;</span></div>
+            <div class="a">No sin tu consentimiento. Se publicará una política antes del lanzamiento.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ASIDE -->
+    <aside>
+      <div class="panel shell poster-preview">
+        <h4>Resumen rápido</h4>
+        <div class="grade-row"><div class="grade-label">TIC</div><div class="grade-bar"><div class="grade-fill" data-grade="85" style="background:linear-gradient(90deg,var(--good),#28c37b)">85%</div></div></div>
+        <div class="grade-row"><div class="grade-label">Inglés</div><div class="grade-bar"><div class="grade-fill" data-grade="70" style="background:linear-gradient(90deg,var(--warn),#ffd27a)">70%</div></div></div>
+        <div class="grade-row"><div class="grade-label">Álgebra</div><div class="grade-bar"><div class="grade-fill" data-grade="55" style="background:linear-gradient(90deg,var(--bad),#ff7b7b)">55%</div></div></div>
+
+        <div style="height:12px"></div>
+
+        <div class="panel" style="padding:12px;margin-top:8px">
+          <h4>Equipo</h4>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+            <div style="flex:1 1 140px;background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);padding:10px;border-radius:10px;text-align:center">Equipo EduTrack</div>
+            <div style="flex:1 1 140px;background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);padding:10px;border-radius:10px;text-align:center">UX & Legal</div>
+          </div>
+        </div>
+
+        <div style="height:12px"></div>
+
+        <div class="panel" style="padding:12px;margin-top:8px">
+          <h4>Privacidad</h4>
+          <p class="small">EduTrack se diseñará con privacidad por diseño; el usuario tendrá control y transparencia sobre sus datos.</p>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <footer class="footer">© 2025 EduTrack — Página informativa y estética avanzada</footer>
+</div>
+
+<!-- Notification (simple JS toggled, inline style to avoid external CSS dependency) -->
+<div id="notify" role="status" aria-live="polite" style="position:fixed;right:18px;bottom:18px;padding:12px 16px;border-radius:12px;background:linear-gradient(90deg,#06b6d4,#7c3aed);color:#021026;box-shadow:0 12px 40px rgba(0,0,0,0.45);opacity:0;transform:translateY(12px);transition:all 320ms ease">Bienvenido</div>
+
+<!-- SCRIPTS: Canvas background, UI behaviors, many style-driven interactions -->
+<script>
+/* =========================
+   Animated Canvas Background (waves + particles)
+   ========================= */
+(function(){
+  const canvas = document.getElementById('bgCanvas');
+  const ctx = canvas.getContext('2d');
+  let w = innerWidth, h = innerHeight;
+  const DPR = Math.max(1, devicePixelRatio || 1);
+  const layers = [
+    {amp: 80, freq: 0.00065, speed: 0.6, color: 'rgba(7,20,40,0.6)'},
+    {amp: 40, freq: 0.0012, speed: 1.0, color: 'rgba(6,182,212,0.06)'},
+    {amp: 60, freq: 0.0009, speed: 0.8, color: 'rgba(124,58,237,0.06)'}
+  ];
+  let t0 = performance.now();
+
+  function resize(){
+    w = innerWidth; h = innerHeight;
+    canvas.width = Math.floor(w * DPR);
+    canvas.height = Math.floor(h * DPR);
+    canvas.style.width = w + 'px';
+    canvas.style.height = h + 'px';
+    ctx.setTransform(DPR,0,0,DPR,0,0);
+  }
+  addEventListener('resize', resize, {passive:true});
+  resize();
+
+  function draw(now){
+    const time = (now - t0) / 1000;
+    ctx.clearRect(0,0,w,h);
+
+    // subtle vignette radial
+    const grd = ctx.createRadialGradient(w*0.8, h*0.1, 10, w*0.8, h*0.1, Math.max(w,h));
+    grd.addColorStop(0, 'rgba(6,182,212,0.03)');
+    grd.addColorStop(1, 'rgba(124,58,237,0.01)');
+    ctx.fillStyle = grd;
+    ctx.fillRect(0,0,w,h);
+
+    layers.forEach((L, li) => {
+      ctx.beginPath();
+      ctx.moveTo(0, h);
+      for(let x = 0; x <= w; x += 8){
+        const y = h/2 + Math.sin((x * L.freq) + (time * L.speed) + li) * L.amp * Math.cos(time * 0.08 + li);
+        ctx.lineTo(x, y);
+      }
+      ctx.lineTo(w, h);
+      ctx.closePath();
+      ctx.fillStyle = L.color;
+      ctx.fill();
+    });
+
+    requestAnimationFrame(draw);
+  }
+  requestAnimationFrame(draw);
+})();
+
+/* =========================
+   Helpers: notification & small UI
+   ========================= */
+function showNotice(msg, ms=3200){
+  const el = document.getElementById('notify');
+  el.textContent = msg;
+  el.style.opacity = '1';
+  el.style.transform = 'translateY(0)';
+  setTimeout(()=>{ el.style.opacity = '0'; el.style.transform = 'translateY(12px)'; }, ms);
+}
+
+/* =========================
+   Counters and preview bars initialisation
+   ========================= */
+(function initPreview(){
+  try{
+    const key = 'et_vis_v5';
+    let v = Number(localStorage.getItem(key) || 0) + 1;
+    localStorage.setItem(key, v);
+    const vc = document.getElementById('visitCounter');
+    if(vc) vc.textContent = 'Visitas: ' + v;
+  }catch(e){}
+  document.querySelectorAll('.grade-fill').forEach(el => {
+    const g = Math.min(100, Math.max(0, Number(el.getAttribute('data-grade') || 0)));
+    el.style.width = g + '%';
+    el.textContent = g + '%';
+  });
+
+  (function countdown(){
+    const launch = new Date(); launch.setFullYear(launch.getFullYear()+1,5,1);
+    const el = document.getElementById('countdown');
+    function update(){
+      const diff = Math.max(0, launch - Date.now());
+      if(diff === 0){ el.textContent = 'Lanzamiento: disponible'; return; }
+      const days = Math.floor(diff / (1000*60*60*24));
+      const hours = Math.floor((diff/(1000*60*60))%24);
+      const mins = Math.floor((diff/(1000*60))%60);
+      const secs = Math.floor((diff/1000)%60);
+      el.textContent = `Lanzamiento en: ${days} días ${String(hours).padStart(2,'0')}:${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}`;
+    }
+    update(); setInterval(update,1000);
+  })();
+})();
+
+/* =========================
+   FAQ Accordion
+   ========================= */
+(function faqAccordion(){
+  document.querySelectorAll('.faq .item .q').forEach(q => q.addEventListener('click', () => {
+    const a = q.nextElementSibling;
+    const open = a.classList.contains('open');
+    document.querySelectorAll('.faq .a').forEach(x => x.classList.remove('open'));
+    if(!open) a.classList.add('open');
+  }));
+})();
+
+/* =========================
+   Simulator (inputs + Canvas drawing, no external libs)
+   ========================= */
+(function simulator(){
+  const inputs = document.getElementById('inputs');
+  const canvas = document.getElementById('chartCanvas');
+  const ctx = canvas.getContext('2d');
+
+  // default dataset
+  let subjects = [
+    {name:'TIC', grade:85},
+    {name:'Inglés', grade:70},
+    {name:'Álgebra', grade:55}
+  ];
+
+  function createRow(item){
+    const row = document.createElement('div');
+    row.className = 'row';
+    const name = document.createElement('input'); name.type='text'; name.value = item.name; name.style.flex = '1';
+    const grade = document.createElement('input'); grade.type='number'; grade.min=0; grade.max=100; grade.value = item.grade; grade.style.width = '84px';
+    const del = document.createElement('button'); del.type='button'; del.className='btn'; del.textContent='Eliminar';
+    del.addEventListener('click', () => { row.remove(); drawFromDOM(); updatePreview(); });
+    row.appendChild(name); row.appendChild(grade); row.appendChild(del);
+    return row;
+  }
+
+  function render(){
+    inputs.innerHTML = '';
+    subjects.forEach(s => inputs.appendChild(createRow(s)));
+  }
+
+  function readFromDOM(){
+    return Array.from(inputs.children).map(r => {
+      const name = r.querySelector('input[type="text"]').value.trim() || 'Materia';
+      const grade = Math.min(100, Math.max(0, Number(r.querySelector('input[type="number"]').value || 0)));
+      return {name, grade};
+    });
+  }
+
+  function updatePreview(){
+    const arr = readFromDOM();
+    document.querySelectorAll('.grade-fill').forEach((el, i) => {
+      const v = arr[i] ? arr[i].grade : Number(el.getAttribute('data-grade') || 0);
+      el.style.width = Math.min(100, Math.max(0, v)) + '%';
+      el.textContent = v + '%';
+    });
+  }
+
+  function ensureCanvas(){
+    const wrap = document.getElementById('chartWrap');
+    const rect = wrap.getBoundingClientRect();
+    const DPR = Math.max(1, devicePixelRatio || 1);
+    canvas.width = Math.floor(rect.width * DPR);
+    canvas.height = Math.floor(rect.height * DPR);
+    canvas.style.width = rect.width + 'px';
+    canvas.style.height = rect.height + 'px';
+    ctx.setTransform(DPR,0,0,DPR,0,0);
+  }
+
+  function draw(list){
+    ensureCanvas();
+    const w = canvas.clientWidth, h = canvas.clientHeight;
+    ctx.clearRect(0,0,w,h);
+    if(!list.length){
+      ctx.fillStyle = 'rgba(255,255,255,0.06)';
+      ctx.font = '14px Inter, sans-serif';
+      ctx.fillText('Agrega materias para ver la gráfica', 12, 24);
+      return;
+    }
+    const padding = 22;
+    const gap = 14;
+    const barW = Math.max(22, (w - padding*2 - (list.length-1)*gap) / list.length);
+    list.forEach((s, idx) => {
+      const val = Math.min(100, Math.max(0, s.grade));
+      const x = padding + idx * (barW + gap);
+      const barH = (h - padding*2) * (val / 100);
+      const y = h - padding - barH;
+      const color = val >= 85 ? 'rgba(22,163,74,0.95)' : val >= 60 ? 'rgba(245,158,11,0.95)' : 'rgba(239,68,68,0.95)';
+      // rounded bar
+      ctx.fillStyle = color;
+      roundRect(ctx, x, y, barW, barH, 8);
+      // value label
+      ctx.fillStyle = 'rgba(234,246,255,0.95)';
+      ctx.font = '12px Inter';
+      ctx.textAlign = 'center';
+      ctx.fillText(val + '%', x + barW/2, y - 8);
+      // name
+      ctx.fillStyle = 'rgba(234,246,255,0.8)';
+      ctx.font = '11px Inter';
+      ctx.fillText(s.name, x + barW/2, h - padding + 14);
+    });
+  }
+
+  function roundRect(ctx,x,y,w,h,r){
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + w - r, y);
+    ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+    ctx.lineTo(x + w, y + h - r);
+    ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+    ctx.lineTo(x + r, y + h);
+    ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+    ctx.lineTo(x, y + r);
+    ctx.quadraticCurveTo(x, y, x + r, y);
+    ctx.closePath();
+    ctx.fill();
+  }
+
+  function drawFromDOM(){
+    const arr = readFromDOM();
+    draw(arr);
+  }
+
+  // UI events
+  document.getElementById('addSubject').addEventListener('click', () => {
+    const row = createRow({name:'Nueva materia', grade:75});
+    inputs.appendChild(row);
+    row.querySelector('input[type="text"]').focus();
+  });
+
+  document.getElementById('runCalc').addEventListener('click', () => {
+    const arr = readFromDOM();
+    if(!arr.length){ showNotice('Agrega materias primero'); return; }
+    const avg = +(arr.reduce((s,x)=>s + Number(x.grade||0),0) / arr.length).toFixed(2);
+    const risks = arr.filter(s => s.grade < 60).map(s => s.name);
+    document.getElementById('avgVal').textContent = avg;
+    document.getElementById('riskVal').textContent = risks.length ? risks.join(', ') : '—';
+    draw(arr);
+    updatePreview();
+  });
+
+  document.getElementById('exportCSV').addEventListener('click', () => {
+    const arr = readFromDOM();
+    if(!arr.length){ showNotice('No hay materias para exportar'); return; }
+    const csv = ['Materia,Calificacion', ...arr.map(s => `"${s.name.replace(/"/g,'""')}",${s.grade}`)].join('\n');
+    const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = 'edutrack_scenario.csv'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+    showNotice('CSV generado');
+  });
+
+  // initial render
+  (function init(){
+    // render default rows
+    inputs.innerHTML = '';
+    subjects.forEach(s => inputs.appendChild(createRow(s)));
+    draw(subjects);
+    updatePreview();
+    window.addEventListener('resize', ()=> draw(readFromDOM()));
+  })();
+})();
+
+/* =========================
+   Small accessibility helpers
+   ========================= */
+(function(){
+  document.addEventListener('keydown', e => {
+    if((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k'){ e.preventDefault(); const x = document.querySelector('#inputs input[type="text"]'); if(x){ x.focus(); showNotice('Atajo: formulario enfocado'); } }
+  });
+  document.addEventListener('DOMContentLoaded', () => showNotice('Bienvenido a EduTrack'));
+})();
+</script>
+</body>
+</html>

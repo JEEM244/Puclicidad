@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Formulario de Contacto</title>
+<style>
+
+    body {
+
+      font-family: Arial, sans-serif;
+
+      background-color: #f4f4f4;
+
+      margin: 0;
+
+      padding: 0;
+
+      display: flex;
+
+      justify-content: center;
+
+      align-items: center;
+
+      height: 100vh;
+
+    }
+ 
+    form {
+
+      background-color: #fff;
+
+      padding: 30px;
+
+      border-radius: 8px;
+
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+
+      width: 400px;
+
+    }
+ 
+    h1 {
+
+      text-align: center;
+
+      margin-bottom: 20px;
+
+      color: #333;
+
+    }
+ 
+    label {
+
+      display: block;
+
+      margin-bottom: 5px;
+
+      font-weight: bold;
+
+    }
+ 
+    input[type="text"],
+
+    input[type="email"],
+
+    textarea {
+
+      width: 100%;
+
+      padding: 10px;
+
+      margin-bottom: 15px;
+
+      border: 1px solid #ccc;
+
+      border-radius: 4px;
+
+      box-sizing: border-box;
+
+    }
+ 
+    textarea {
+
+      resize: vertical;
+
+      height: 100px;
+
+    }
+ 
+    .group {
+
+      margin-bottom: 15px;
+
+    }
+ 
+    .group p {
+
+      margin-bottom: 8px;
+
+      font-weight: bold;
+
+    }
+ 
+    input[type="radio"],
+
+    input[type="checkbox"] {
+
+      margin-right: 5px;
+
+    }
+ 
+    input[type="submit"] {
+
+      width: 100%;
+
+      background-color: #007BFF;
+
+      color: white;
+
+      padding: 12px;
+
+      border: none;
+
+      border-radius: 4px;
+
+      cursor: pointer;
+
+      font-size: 16px;
+
+    }
+ 
+    input[type="submit"]:hover {
+
+      background-color: #0056b3;
+
+    }
+</style>
+</head>
+<body>
+<form>
+<h1>Formulario de Contacto</h1>
+ 
+    <!-- Nombre -->
+<label for="nombre">Nombre:</label>
+<input type="text" id="nombre" name="nombre" placeholder="Escribe tu nombre" required>
+ 
+    <!-- Correo Electrónico -->
+<label for="correo">Correo electrónico:</label>
+<input type="email" id="correo" name="correo" placeholder="correo@ejemplo.com" required>
+ 
+    <!-- Mensaje -->
+<label for="mensaje">Mensaje:</label>
+<textarea id="mensaje" name="mensaje" placeholder="Escribe tu mensaje aquí" required></textarea>
+ 
+    <!-- Género -->
+<div class="group">
+<p>Género:</p>
+<input type="radio" id="masculino" name="genero" value="masculino" required>
+<label for="masculino">Masculino</label><br>
+ 
+      <input type="radio" id="femenino" name="genero" value="femenino">
+<label for="femenino">Femenino</label><br>
+ 
+      <input type="radio" id="otro" name="genero" value="otro">
+<label for="otro">Otro</label>
+</div>
+ 
+    <!-- Intereses -->
+<div class="group">
+<p>Intereses:</p>
+<input type="checkbox" id="musica" name="intereses" value="musica">
+<label for="musica">Música</label><br>
+ 
+      <input type="checkbox" id="deportes" name="intereses" value="deportes">
+<label for="deportes">Deportes</label><br>
+ 
+      <input type="checkbox" id="lectura" name="intereses" value="lectura">
+<label for="lectura">Lectura</label>
+</div>
+ 
+    <!-- Botón de envío -->
+<input type="submit" value="Enviar">
+</form>
+</body>
+</html>
+
+ 

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Página Mejorada con CSS Avanzado</title>
+  <style>
+    /* Estilos Generales */
+    body {
+      background-color: #f0f0f0;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      color: #333;
+    }
+ 
+    .container {
+      max-width: 1200px;
+      margin: 0 auto; /* Centrado */
+      padding: 20px;
+    }
+ 
+    header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+ 
+    footer {
+      background-color: #333;
+      color: white;
+      text-align: center;
+      padding: 10px;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+    }
+ 
+    /* Menú de navegación */
+    #menu {
+      background-color: #2196F3;
+      padding: 10px;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+ 
+    #menu ul {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+    }
+ 
+    #menu ul li {
+      margin: 0 20px;
+    }
+ 
+    #menu a {
+      color: white;
+      text-decoration: none;
+      font-size: 18px;
+      padding: 5px 10px;
+    }
+ 
+    #menu a:hover {
+      background-color: #0D47A1;
+      border-radius: 5px;
+    }
+ 
+    /* Párrafos */
+    .parrafo {
+      font-size: 18px;
+      color: #555;
+      text-align: justify;
+    }
+ 
+    /* Título */
+    .titulo {
+      font-size: 36px;
+      color: #4CAF50;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+ 
+    /* Enlaces */
+    .enlace {
+      color: #2196F3;
+      text-decoration: none;
+    }
+ 
+    .enlace:hover {
+      color: #0D47A1;
+      text-decoration: underline;
+    }
+ 
+    /* Formularios */
+    form {
+      display: grid;
+      gap: 15px;
+    }
+ 
+    form label {
+      font-size: 16px;
+    }
+ 
+    form input[type="text"],
+    form input[type="email"],
+    form textarea {
+      padding: 10px;
+      font-size: 16px;
+      width: 100%;
+      border: 2px solid #ddd;
+      border-radius: 5px;
+      box-sizing: border-box;
+    }
+ 
+    form input[type="submit"] {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+ 
+    form input[type="submit"]:hover {
+      background-color: #388E3C;
+    }
+ 
+  </style>
+</head>
+<body>
+  <!-- Menú de navegación -->
+  <nav id="menu">
+    <ul>
+      <li><a href="#inicio">Inicio</a></li>
+      <li><a href="#acerca">Acerca de</a></li>
+      <li><a href="#contacto">Contacto</a></li>
+    </ul>
+  </nav>
+ 
+  <!-- Contenedor principal -->
+  <div class="container">
+    <header>
+      <h1 class="titulo">Bienvenido a Mi Página</h1>
+    </header>
+    <section class="contenido">
+      <p class="parrafo">Este es un párrafo de ejemplo donde se aplica estilo CSS avanzado, con técnicas de flexbox, pseudoclases y más.</p>
+      <a href="#" class="enlace">Haz clic aquí</a>
+    </section>
+ 
+    <footer>
+      <p>&copy; 2025 Mi Página Web. Todos los derechos reservados.</p>
+    </footer>
+  </div>
+</body>
+</html>
+ 
+ 

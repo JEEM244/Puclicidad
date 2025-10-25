@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solicitud de Empleo</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  
+  <!-- Encabezado -->
+  <header class="Tit">
+    <h1>  Diseño Avansado de Paginas Web:Evidencia de Aprendizaje de Etapa 3</h1>
+  </header>
+    <div class="container">
+        <h1>Formulario de Solicitud de Empleo</h1>
+        <form id="empleoForm" onsubmit="return validarFormulario()">
+            <div class="input-group">
+                <label for="nombre">Nombre:</label>
+                <input type="text" id="nombre" name="nombre" required>
+            </div>
+            <div class="input-group">
+                <label for="apellido">Apellido:</label>
+                <input type="text" id="apellido" name="apellido" required>
+            </div>
+            <div class="input-group">
+                <label for="edad">Edad:</label>
+                <input type="number" id="edad" name="edad" required min="18" max="100">
+            </div>
+            <div class="input-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="input-group">
+                <label for="rfc">RFC:</label>
+                <input type="text" id="rfc" name="rfc" required pattern="([A-Z,Ñ,&]{3,4})\d{6}[A-Z0-9]{3}">
+            </div>
+            <div class="input-group">
+                <label for="sexo">Sexo:</label>
+                <select id="sexo" name="sexo" required>
+                    <option value="">Selecciona...</option>
+                    <option value="masculino">Masculino</option>
+                    <option value="femenino">Femenino</option>
+                    <option value="otro">Otro</option>
+                </select>
+            </div>
+            
+            <!-- Estado Civil (con radio buttons) -->
+            <div class="input-group">
+                <label>Estado Civil:</label>
+                <label for="soltero">
+                    <input type="radio" id="soltero" name="estadoCivil" value="Soltero(a)" required> Soltero(a)
+                </label>
+                <label for="casado">
+                    <input type="radio" id="casado" name="estadoCivil" value="Casado(a)" required> Casado(a)
+                </label>
+                <label for="otroEstado">
+                    <input type="radio" id="otroEstado" name="estadoCivil" value="Otro" required> Otro
+                </label>
+            </div>
+
+            <!-- Habilidades Tecnológicas (con checkboxes organizados en cuadrícula) -->
+            <div class="input-group">
+                <label>Habilidades Tecnológicas:</label>
+                <fieldset>
+                <div class="habilidades-grid">
+                    <label for="word">
+                        <input type="checkbox" id="word" name="habilidades" value="Word"> Word
+                    </label>
+                    <label for="excel">
+                        <input type="checkbox" id="excel" name="habilidades" value="Excel"> Excel
+                    </label>
+                    <label for="powerpoint">
+                        <input type="checkbox" id="powerpoint" name="habilidades" value="PowerPoint"> PowerPoint
+                    </label>
+                    <label for="outlook">
+                        <input type="checkbox" id="outlook" name="habilidades" value="Outlook"> Outlook
+                    </label>
+                    <label for="access">
+                        <input type="checkbox" id="access" name="habilidades" value="Access"> Access
+                    </label>
+                    <label for="teams">
+                        <input type="checkbox" id="teams" name="habilidades" value="Teams"> Teams
+                    </label>
+                    <label for="onenote">
+                        <input type="checkbox" id="onenote" name="habilidades" value="OneNote"> OneNote
+                    </label>
+                    <label for="sharepoint">
+                        <input type="checkbox" id="sharepoint" name="habilidades" value="SharePoint"> SharePoint
+                    </label>
+                </div>
+                </fieldset>
+            </div>
+
+            <!-- Unidad EIAO (con select) -->
+            <div class="input-group">
+                <label for="unidad">Unidad EIAO:</label>
+                <select id="unidad" name="unidad" required>
+                    <option value="">Selecciona una unidad...</option>
+                    <option value="Guadalupe">Guadalupe</option>
+                    <option value="Churubusco">Churubusco</option>
+                    <option value="Escobedo">Escobedo</option>
+                    <option value="Puebla">Puebla</option>
+                    <option value="Monterrey">Monterrey</option>
+                    <option value="Toluca">Toluca</option>
+                    <option value="Cancún">Cancún</option>
+                </select>
+            </div>
+            
+            <div class="input-group">
+                <button type="submit">Enviar Solicitud</button>
+            </div>
+        </form>
+
+        <div id="resultado" style="display:none;">
+            <h2>Datos Capturados:</h2>
+            <p><strong>Nombre:</strong> <span id="resNombre"></span></p>
+            <p><strong>Apellido:</strong> <span id="resApellido"></span></p>
+            <p><strong>Edad:</strong> <span id="resEdad"></span></p>
+            <p><strong>Email:</strong> <span id="resEmail"></span></p>
+            <p><strong>RFC:</strong> <span id="resRfc"></span></p>
+            <p><strong>Sexo:</strong> <span id="resSexo"></span></p>
+            <p><strong>Estado Civil:</strong> <span id="resEstadoCivil"></span></p>
+            <p><strong>Habilidades Tecnológicas:</strong> <span id="resHabilidades"></span></p>
+            <p><strong>Unidad EIAO:</strong> <span id="resUnidad"></span></p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

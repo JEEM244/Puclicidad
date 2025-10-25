@@ -1,0 +1,448 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>EduTrack — Próximamente</title>
+<meta name="description" content="EduTrack sincroniza y muestra tus calificaciones desde SIASE y Nexus de forma privada y automática.">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+<script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+/* Variables y temas */
+:root{
+  --bg:#0a1a2c;--card:#071226;--muted:#9fb3c8;--accent:#06b6d4;--accent2:#7c3aed;
+  --good:#16a34a;--warn:#f59e0b;--bad:#ef4444;--radius:16px;--shadow:0 12px 40px rgba(0,0,0,0.55);
+  --text:#eaf6ff;--glass:rgba(255,255,255,0.03);--max-w:1200px;--fast:180ms;--ease:cubic-bezier(.2,.9,.3,1);
+}
+@media(prefers-color-scheme:light){:root{--bg:#f6fbff;--card:#fff;--text:#042233;--glass:rgba(2,18,38,0.03);--shadow:0 12px 30px rgba(2,18,38,0.06)}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+/* Reset y layout */
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-family:Inter,system-ui,-apple-system,'Segoe UI',Roboto,Arial;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
+.container{max-width:var(--max-w);margin:28px auto;padding:0 16px}
+
+/* Header */
+.header{display:flex;gap:18px;align-items:center;padding:26px;border-radius:20px;background:linear-gradient(90deg,var(--accent),var(--accent2));box-shadow:var(--shadow)}
+.logo{width:96px;height:96px;border-radius:14px;display:grid;place-items:center;font-weight:900;font-size:36px;color:#021026;background:linear-gradient(135deg,var(--accent2),var(--accent));box-shadow:0 8px 30px rgba(2,18,38,0.2);animation:logoBounce 1800ms var(--ease) infinite}
+@keyframes logoBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.header-info{min-width:0}
+.h1{font-size:28px;font-weight:900}
+.lead{color:var(--muted);margin-top:8px;font-size:15px;line-height:1.35}
+
+/* Grid principal */
+.grid{display:grid;grid-template-columns:1fr 420px;gap:24px;padding:22px;border-radius:0 0 20px 20px;background:linear-gradient(180deg,#071226,#061221);border:1px solid rgba(255,255,255,0.03);box-shadow:var(--shadow);margin-top:12px}
+@media(max-width:1024px){.grid{grid-template-columns:1fr 1fr}}
+@media(max-width:880px){.grid{grid-template-columns:1fr;padding:18px} .header{flex-direction:column;align-items:flex-start}}
+
+/* Features y cards */
+.features{display:flex;flex-wrap:wrap;gap:20px;align-items:flex-start}
+.feature{width:260px;height:320px;perspective:1400px;cursor:pointer}
+.card-inner{width:100%;height:100%;transition:transform .8s var(--ease);transform-style:preserve-3d;border-radius:14px}
+.feature:focus-within .card-inner,.feature:hover .card-inner{transform:rotateY(180deg)}
+.card-front,.card-back{position:absolute;width:100%;height:100%;backface-visibility:hidden;border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;box-shadow:var(--shadow)}
+.card-front{background:linear-gradient(145deg,var(--accent2),var(--accent));color:#021026}
+.card-front strong{font-size:22px;margin-bottom:10px}
+.card-back{background:linear-gradient(145deg,var(--accent),var(--accent2));transform:rotateY(180deg);color:#021026;font-weight:600;text-align:center}
+
+/* Aside card (derecha) */
+aside.card{background:linear-gradient(180deg,var(--card),transparent);border-radius:14px;padding:20px;border:1px solid var(--glass);box-shadow:var(--shadow);display:flex;flex-direction:column;gap:14px;position:relative}
+aside h3{color:var(--accent2);font-size:20px;font-weight:800;margin-bottom:6px}
+.poster-preview{padding:12px;border-radius:12px;background:linear-gradient(180deg,var(--glass),transparent);border:1px solid rgba(255,255,255,0.03)}
+.grade-sim{display:grid;grid-template-columns:1fr 160px;gap:10px;align-items:center;padding:8px 0}
+.grade-bar{height:18px;border-radius:12px;overflow:hidden;background:rgba(255,255,255,0.03);position:relative}
+.grade-fill{height:100%;border-radius:12px;text-align:right;padding-right:8px;font-weight:800;color:#021026;line-height:18px;width:0;transition:width 900ms var(--ease)}
+.grade-TIC{background:linear-gradient(90deg,var(--good),#28c37b)}
+.grade-Ingles{background:linear-gradient(90deg,var(--warn),#ffd27a)}
+.grade-Algebra{background:linear-gradient(90deg,var(--bad),#ff7b7b)}
+
+.cta{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(90deg,var(--accent),var(--accent2));color:#021026;padding:12px 16px;border-radius:12px;font-weight:800;text-align:center;box-shadow:0 8px 25px rgba(0,0,0,0.35);cursor:pointer;transition:transform var(--fast) var(--ease)}
+.cta:active{transform:translateY(2px)}
+.small{font-size:13px;color:var(--muted)}
+.footer{margin-top:18px;color:var(--muted);font-size:13px;text-align:center;opacity:0.9}
+
+/* Simulador y gráfica */
+.grade-simulator{width:100%;margin-top:18px;border-radius:12px;padding:18px;background:linear-gradient(145deg,#071226,#061121);box-shadow:var(--shadow)}
+.simulator-grid{display:grid;grid-template-columns:1fr 360px;gap:12px}
+@media(max-width:980px){.simulator-grid{grid-template-columns:1fr}}
+.input,select{padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--text)}
+.inputs-list{display:flex;flex-direction:column;gap:8px}
+.row{display:flex;gap:8px;align-items:center}
+.row input[type="text"]{flex:1}
+.row input[type="number"]{width:84px}
+#chartWrap{height:240px;border-radius:10px;overflow:hidden;background:linear-gradient(180deg,#081222,#06101a);border:1px solid rgba(255,255,255,0.03);display:flex;align-items:center;justify-content:center}
+.legend{display:flex;gap:8px;align-items:center;margin-top:8px}
+
+/* Notification */
+.notification{position:fixed;right:18px;bottom:18px;padding:12px 16px;border-radius:12px;background:linear-gradient(90deg,var(--accent),var(--accent2));color:#021026;box-shadow:0 14px 40px rgba(0,0,0,0.5);opacity:0;transform:translateX(12px);transition:opacity .45s,transform .45s;z-index:1200}
+
+/* accessibility */
+.focus-outline:focus{outline:3px solid rgba(124,58,237,0.18);outline-offset:4px}
+.visually-hidden{position:absolute!important;height:1px;width:1px;overflow:hidden;clip:rect(1px,1px,1px,1px);white-space:nowrap}
+</style>
+</head>
+<body>
+<div class="container" role="main" aria-labelledby="site-title">
+  <header class="header" role="banner">
+    <div class="logo" aria-hidden="true">ET</div>
+    <div class="header-info">
+      <h1 id="site-title" class="h1">EduTrack — Próximamente</h1>
+      <p class="lead">Accede automáticamente a tus calificaciones desde SIASE y Nexus, de manera segura y sin complicaciones.</p>
+    </div>
+    <div style="margin-left:auto;display:flex;gap:8px;align-items:center">
+      <button id="themeToggle" class="cta focus-outline" aria-pressed="false" title="Cambiar tema">Tema</button>
+      <button id="installBtn" class="cta focus-outline" hidden>Instalar</button>
+    </div>
+  </header>
+
+  <section class="grid" aria-label="Contenido principal">
+    <main>
+      <div class="features" aria-live="polite" aria-label="Características">
+        <article class="feature" tabindex="0">
+          <div class="card-inner">
+            <div class="card-front"><strong>Automático</strong><p>Tu información escolar, sin escribir nada.</p></div>
+            <div class="card-back"><p>Predicciones de promedios y alertas de materias en riesgo.</p></div>
+          </div>
+        </article>
+
+        <article class="feature" tabindex="0">
+          <div class="card-inner">
+            <div class="card-front"><strong>Privacidad</strong><p>Seguro, sin almacenar contraseñas.</p></div>
+            <div class="card-back"><p>Todo se procesa localmente y de forma confidencial; integración con OAuth recomendada.</p></div>
+          </div>
+        </article>
+
+        <article class="feature" tabindex="0">
+          <div class="card-inner">
+            <div class="card-front"><strong>Beneficios</strong><p>Evita sorpresas en tus calificaciones.</p></div>
+            <div class="card-back"><p>Controla tu desempeño por materia de manera clara y visual.</p></div>
+          </div>
+        </article>
+
+        <article class="feature" tabindex="0">
+          <div class="card-inner">
+            <div class="card-front"><strong>Simulador</strong><p>Ajusta notas y predice tu promedio.</p></div>
+            <div class="card-back"><p>Guarda escenarios y exporta CSV para compartir tu progreso.</p></div>
+          </div>
+        </article>
+      </div>
+
+      <div class="grade-simulator">
+        <h3 style="margin:0 0 8px 0">Simulador de calificaciones</h3>
+        <p class="small" style="margin:0 0 12px 0">Añade materias, ajusta calificaciones y genera la gráfica interactiva. Haz clic en una barra para editar la nota.</p>
+
+        <div class="simulator-grid">
+          <div>
+            <div class="inputs-list" id="inputs" aria-live="polite"></div>
+
+            <div style="display:flex;gap:8px;margin-top:12px">
+              <button id="addSubj" class="cta" type="button">Añadir materia</button>
+              <button id="calcBtn" class="cta" type="button">Calcular y Generar</button>
+              <button id="exportBtn" class="cta" type="button">Exportar CSV</button>
+            </div>
+
+            <div class="legend" style="margin-top:12px">
+              <div class="small"><strong>Promedio:</strong> <span id="avgVal" style="font-weight:900;margin-left:6px">—</span></div>
+              <div class="small"><strong>Riesgos:</strong> <span id="riskVal" style="font-weight:900;margin-left:6px">—</span></div>
+            </div>
+          </div>
+
+          <aside class="card" style="padding:12px">
+            <div id="chartWrap" aria-live="polite">
+              <canvas id="chart" width="320" height="240" role="img" aria-label="Gráfica de calificaciones"></canvas>
+            </div>
+            <div class="small" style="margin-top:8px">Interactúa con la gráfica para editar las notas directamente.</div>
+          </aside>
+        </div>
+      </div>
+    </main>
+
+    <aside class="card" aria-labelledby="aside-title">
+      <h3 id="aside-title">Mantente informado</h3>
+
+      <div class="poster-preview" aria-hidden="false">
+        <div class="grade-sim"><div>TIC</div><div class="grade-bar"><div class="grade-fill grade-TIC" data-grade="85">85%</div></div></div>
+        <div class="grade-sim"><div>Inglés</div><div class="grade-bar"><div class="grade-fill grade-Ingles" data-grade="70">70%</div></div></div>
+        <div class="grade-sim"><div>Álgebra</div><div class="grade-bar"><div class="grade-fill grade-Algebra" data-grade="55">55%</div></div></div>
+      </div>
+
+      <div class="small" id="countdown" aria-live="polite">Lanzamiento en: -- días --:--:--</div>
+      <div class="small" id="visitors">Visitantes: 0</div>
+
+      <form id="subscribeForm" style="margin-top:12px" aria-label="Suscripción">
+        <label class="visually-hidden" for="email">Correo electrónico</label>
+        <div style="display:flex;gap:8px">
+          <input id="email" name="email" type="email" placeholder="tucorreo@ejemplo.com" class="input focus-outline" required aria-required="true">
+          <button class="cta" id="notifyBtn" type="submit">Quiero aviso</button>
+        </div>
+        <div class="small" style="margin-top:8px">Al suscribirte recibirás avisos y beta invites. Respetamos tu privacidad.</div>
+      </form>
+
+      <div style="display:flex;gap:8px;margin-top:12px">
+        <button id="oauthDemo" class="cta" type="button">Conectar SIASE (demo)</button>
+        <button id="exportSubs" class="cta" type="button">Exportar subs</button>
+      </div>
+    </aside>
+  </section>
+
+  <div class="footer">🔒 EduTrack respetará tu privacidad y no almacenará contraseñas de SIASE o Nexus.</div>
+</div>
+
+<div id="notification" class="notification" role="status" aria-live="assertive">¡Te avisaremos cuando EduTrack esté disponible!</div>
+
+<script>
+/* ===== Config y utilidades ===== */
+const launchDate = new Date(); launchDate.setFullYear(launchDate.getFullYear()+1,5,1);
+const pad = n => String(n).padStart(2,'0');
+const noticeEl = document.getElementById('notification');
+function showNotice(msg, ms=3600){ noticeEl.textContent = msg; noticeEl.style.opacity='1'; noticeEl.style.transform='translateX(0)'; setTimeout(()=>{ noticeEl.style.opacity='0'; noticeEl.style.transform='translateX(12px)'; }, ms); }
+
+/* ===== Countdown ===== */
+function updateCountdown(){
+  const now = Date.now(); const diff = launchDate - now;
+  if(diff <= 0){ document.getElementById('countdown').textContent = '¡EduTrack ya está disponible!'; return; }
+  const days = Math.floor(diff / (1000*60*60*24));
+  const hours = Math.floor((diff/(1000*60*60))%24);
+  const mins = Math.floor((diff/(1000*60))%60);
+  const secs = Math.floor((diff/1000)%60);
+  document.getElementById('countdown').textContent = `Lanzamiento en: ${days} días ${pad(hours)}:${pad(mins)}:${pad(secs)}`;
+}
+updateCountdown(); setInterval(updateCountdown,1000);
+
+/* ===== Visitors realista ===== */
+(function initVisitors(){
+  try{
+    const key='ed_visitors_v1';
+    let v = Number(localStorage.getItem(key) || 0);
+    v = Math.max(1, v + (Math.random()<0.14 ? Math.floor(Math.random()*3)+1 : 0));
+    localStorage.setItem(key, v);
+    document.getElementById('visitors').textContent = `Visitantes: ${v}`;
+  }catch(e){ document.getElementById('visitors').textContent = 'Visitantes: —' }
+})();
+setInterval(()=>{ try{ const k='ed_visitors_v1'; let v=Number(localStorage.getItem(k)||0); v += Math.random()<0.08 ? 1 : 0; localStorage.setItem(k,v); document.getElementById('visitors').textContent=`Visitantes: ${v}` }catch(e){} },12000);
+
+/* ===== Inicializa fills preview ===== */
+document.querySelectorAll('.grade-fill').forEach(el=>{ const g = Math.min(100, Math.max(0, Number(el.dataset.grade||0))); el.style.width = g + '%'; el.textContent = g + '%'; });
+
+/* ===== IndexedDB helper (suscriptores) ===== */
+function idbSaveEmail(email){
+  return new Promise((res, rej) => {
+    if(!('indexedDB' in window)){ // fallback localStorage
+      try{ const k='ed_subs_v2'; const arr = JSON.parse(localStorage.getItem(k)||'[]'); if(!arr.includes(email)) arr.push(email); localStorage.setItem(k, JSON.stringify(arr)); return res(true); }catch(e){ return rej(e); }
+    }
+    const rq = indexedDB.open('ed_db',1);
+    rq.onupgradeneeded = e => e.target.result.createObjectStore('subs',{keyPath:'email'});
+    rq.onsuccess = e => {
+      const db = e.target.result;
+      const tx = db.transaction('subs','readwrite');
+      tx.objectStore('subs').put({email,created:Date.now()});
+      tx.oncomplete = ()=>{ db.close(); res(true); };
+      tx.onerror = ()=> rej(tx.error);
+    };
+    rq.onerror = ()=> rej(rq.error);
+  });
+}
+
+/* ===== Suscripción formulario ===== */
+document.getElementById('subscribeForm').addEventListener('submit', async e=>{
+  e.preventDefault();
+  const mail = document.getElementById('email').value.trim().toLowerCase();
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mail)){ showNotice('Correo inválido'); return; }
+  try{ await idbSaveEmail(mail); showNotice('Suscripción registrada (simulado)'); document.getElementById('email').value=''; }
+  catch(err){ showNotice('Error guardando suscripción'); }
+});
+
+/* ===== Exportar suscriptores (CSV) ===== */
+document.getElementById('exportSubs').addEventListener('click', async ()=>{
+  try{
+    // intentamos leer IndexedDB, si falla usamos localStorage fallback
+    const list = await (async ()=>{
+      if(!('indexedDB' in window)) return JSON.parse(localStorage.getItem('ed_subs_v2')||'[]');
+      return await new Promise((res,rej)=>{
+        const rq = indexedDB.open('ed_db');
+        rq.onsuccess = e => {
+          const db = e.target.result;
+          const tx = db.transaction('subs','readonly');
+          const store = tx.objectStore('subs');
+          const arr = [];
+          store.openCursor().onsuccess = ev => {
+            const cur = ev.target.result;
+            if(!cur){ db.close(); return res(arr); }
+            arr.push(cur.value.email); cur.continue();
+          };
+        };
+        rq.onerror = ()=> res(JSON.parse(localStorage.getItem('ed_subs_v2')||'[]'));
+      });
+    })();
+    if(!list || list.length===0) return showNotice('No hay suscriptores');
+    const csv = ['email',...list].join('\n');
+    const blob = new Blob([csv], {type:'text/csv'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = 'subscribers.csv'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+    showNotice('Exportado subs');
+  }catch(e){ showNotice('Error exportando'); }
+});
+
+/* ===== Simulador: inputs dinámicos ===== */
+const inputsEl = document.getElementById('inputs');
+let currentSubjects = [{name:'TIC',grade:85},{name:'Inglés',grade:70},{name:'Álgebra',grade:55}];
+
+function renderSubjects(list = currentSubjects){
+  currentSubjects = list.map(s=>({name:String(s.name).slice(0,60), grade: Math.min(100, Math.max(0, Number(s.grade||0)))}));
+  inputsEl.innerHTML = '';
+  currentSubjects.forEach((s, idx) => {
+    const row = document.createElement('div'); row.className='row';
+    const name = document.createElement('input'); name.type='text'; name.value=s.name; name.setAttribute('aria-label',`Nombre materia ${idx+1}`);
+    name.style.padding='8px'; name.style.borderRadius='8px'; name.style.border='1px solid rgba(255,255,255,0.04)'; name.style.background='transparent'; name.style.color='inherit';
+    const grade = document.createElement('input'); grade.type='number'; grade.min=0; grade.max=100; grade.value=s.grade; grade.setAttribute('aria-label',`Calificación de ${s.name}`);
+    grade.style.width='84px'; grade.style.padding='8px'; grade.style.borderRadius='8px'; grade.style.border='1px solid rgba(255,255,255,0.04)'; grade.style.background='transparent';
+    const del = document.createElement('button'); del.type='button'; del.className='cta'; del.textContent='Eliminar'; del.addEventListener('click', ()=>{ const arr = currentSubjects.slice(); arr.splice(idx,1); renderSubjects(arr); updatePreviewBars(arr); updateChart(arr); });
+    row.appendChild(name); row.appendChild(grade); row.appendChild(del);
+    inputsEl.appendChild(row);
+  });
+}
+renderSubjects();
+
+/* ===== Leer materias desde DOM ===== */
+function readSubjectsFromDOM(){
+  const rows = Array.from(inputsEl.children);
+  return rows.map(r => {
+    const nameInput = r.querySelector('input[type="text"]') || r.querySelector('input');
+    const gradeInput = r.querySelector('input[type="number"]');
+    const name = nameInput ? nameInput.value.trim() || 'Materia' : 'Materia';
+    const grade = gradeInput ? Math.min(100, Math.max(0, Number(gradeInput.value || 0))) : 0;
+    return { name, grade };
+  });
+}
+
+/* ===== Preview bars (aside) ===== */
+function updatePreviewBars(list){
+  const fills = document.querySelectorAll('.poster-preview .grade-fill');
+  fills.forEach((el,i) => {
+    const g = list[i] ? list[i].grade : (el.dataset.grade || 0);
+    el.textContent = `${g}%`;
+    el.style.width = `${Math.min(100, Math.max(0, Number(g)))}%`;
+  });
+}
+
+/* ===== Chart.js management (create/update/destroy safely) ===== */
+let chartInstance = null;
+const chartCanvas = document.getElementById('chart');
+const chartWrap = document.getElementById('chartWrap');
+
+function ensureCanvasSize(){
+  const rect = chartWrap.getBoundingClientRect();
+  chartCanvas.style.width = '100%';
+  chartCanvas.style.height = rect.height + 'px';
+}
+
+function updateChart(data = currentSubjects){
+  ensureCanvasSize();
+  const labels = data.map(d=>d.name);
+  const values = data.map(d=>d.grade);
+
+  if(chartInstance){
+    chartInstance.data.labels = labels;
+    chartInstance.data.datasets[0].data = values;
+    chartInstance.data.datasets[0].backgroundColor = values.map(v=> v>=85? 'rgba(22,163,74,0.95)' : v>=60? 'rgba(245,158,11,0.95)' : 'rgba(239,68,68,0.95)');
+    chartInstance.options.animation = { duration: 600, easing: 'easeOutQuart' };
+    chartInstance.update();
+    return;
+  }
+
+  // destroy if leftover instance present (defensive)
+  if(chartInstance && chartInstance.destroy) { try{ chartInstance.destroy(); }catch(e){} chartInstance = null; }
+
+  const ctx = chartCanvas.getContext('2d');
+  chartInstance = new Chart(ctx, {
+    type:'bar',
+    data:{ labels, datasets:[{ label:'Calificaciones', data:values, backgroundColor: values.map(v=> v>=85? 'rgba(22,163,74,0.95)' : v>=60? 'rgba(245,158,11,0.95)' : 'rgba(239,68,68,0.95)'), borderRadius:6, barThickness:28 }] },
+    options:{
+      maintainAspectRatio:false,
+      responsive:true,
+      animation:{ duration:700, easing:'easeOutQuart' },
+      plugins:{ legend:{display:false}, tooltip:{mode:'index',intersect:false} },
+      scales:{ y:{ beginAtZero:true, max:100, ticks:{ stepSize:10 } } },
+      onClick(evt, elements){
+        if(!elements.length) return;
+        const idx = elements[0].index;
+        const subs = readSubjectsFromDOM();
+        const newGrade = prompt('Nueva calificación para '+subs[idx].name, subs[idx].grade);
+        if(newGrade === null) return;
+        const n = Math.max(0, Math.min(100, Number(newGrade)));
+        if(Number.isNaN(n)) { showNotice('Valor inválido'); return; }
+        // actualizar DOM y re-calcular
+        const row = inputsEl.children[idx];
+        if(row){
+          const gradeInput = row.querySelector('input[type="number"]');
+          if(gradeInput) gradeInput.value = n;
+        }
+        calculateAndRender();
+      }
+    }
+  });
+}
+
+/* ===== Calcular promedio y riesgos y actualizar UI ===== */
+function calculateAndRender(){
+  const subs = readSubjectsFromDOM();
+  if(!subs.length){ showNotice('Agrega materias primero'); return; }
+  const avg = +(subs.reduce((s,x)=> s + Number(x.grade||0),0) / subs.length).toFixed(2);
+  const risks = subs.filter(s=>s.grade < 60).map(s=>s.name);
+  document.getElementById('avgVal').textContent = avg;
+  document.getElementById('riskVal').textContent = risks.length ? risks.join(', ') : '—';
+
+  currentSubjects = subs;
+  updatePreviewBars(subs);
+  updateChart(subs);
+}
+
+/* ===== Eventos UI: add, calc, export CSV ===== */
+document.getElementById('addSubj').addEventListener('click', ()=>{ const arr = readSubjectsFromDOM(); arr.push({name:'Nueva',grade:70}); renderSubjects(arr); updatePreviewBars(arr); updateChart(arr); });
+document.getElementById('calcBtn').addEventListener('click', ()=> calculateAndRender());
+document.getElementById('exportBtn').addEventListener('click', ()=>{
+  const subs = readSubjectsFromDOM();
+  if(!subs.length) return showNotice('No hay materias para exportar');
+  const csv = ['Materia,Calificacion', ...subs.map(s=>`"${s.name.replace(/"/g,'""')}",${s.grade}`)].join('\n');
+  const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = 'edutrack_scenario.csv'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+  showNotice('CSV generado');
+});
+
+/* ===== OAuth demo UI ===== */
+document.getElementById('oauthDemo').addEventListener('click', ()=> showNotice('Demo OAuth: en producción abriría el flujo seguro en backend (UI simulado)'));
+
+/* ===== Export subscribers quick (CSV download) handled above via Export subs button ===== */
+
+/* ===== Theme toggle y PWA install prompt ===== */
+let deferredPrompt = null;
+const installBtn = document.getElementById('installBtn');
+window.addEventListener('beforeinstallprompt', (e)=>{ e.preventDefault(); deferredPrompt = e; installBtn.hidden = false; });
+installBtn.addEventListener('click', async ()=>{ if(!deferredPrompt) return; deferredPrompt.prompt(); const choice = await deferredPrompt.userChoice; if(choice.outcome === 'accepted') showNotice('App instalada'); deferredPrompt = null; installBtn.hidden = true; });
+
+const themeBtn = document.getElementById('themeToggle');
+themeBtn.addEventListener('click', ()=> {
+  const cur = document.documentElement.getAttribute('data-theme');
+  if(cur === 'dark'){ document.documentElement.setAttribute('data-theme','light'); themeBtn.setAttribute('aria-pressed','true'); showNotice('Tema: claro (demo)'); }
+  else { document.documentElement.setAttribute('data-theme','dark'); themeBtn.setAttribute('aria-pressed','true'); showNotice('Tema: oscuro (demo)'); }
+});
+
+/* ===== Service Worker registration (opcional sw.js) ===== */
+if('serviceWorker' in navigator){ navigator.serviceWorker.register('/sw.js').catch(()=>{/* silent fail */}); }
+
+/* ===== Inicialización final (render inicial y gráfico estable) ===== */
+document.addEventListener('DOMContentLoaded', ()=> {
+  renderSubjects(currentSubjects);
+  updatePreviewBars(currentSubjects);
+  // render gráfico con los valores iniciales sin crear loops
+  updateChart(currentSubjects);
+  // calcula promedio inicial
+  calculateAndRender();
+});
+</script>
+</body>
+</html>

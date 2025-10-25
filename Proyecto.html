@@ -1,0 +1,461 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>EduTrack — Guía completa y paso a paso</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#071226;--panel:#0b1624;--muted:#9fb3c8;--accent:#06b6d4;--accent2:#7c3aed;--good:#16a34a;--warn:#f59e0b;--bad:#ef4444;--glass:rgba(255,255,255,0.03);--glass2:rgba(255,255,255,0.02);--card-border:rgba(255,255,255,0.04)}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;font-family:Inter,system-ui,-apple-system,'Segoe UI',Roboto,Arial;color:#e9f2fb;background:radial-gradient(1200px 600px at 10% 10%, rgba(12,34,56,0.55), transparent), linear-gradient(180deg,#031022 0%,#071226 100%);-webkit-font-smoothing:antialiased}
+.container{max-width:1200px;margin:28px auto;padding:24px}
+.header{display:flex;gap:18px;align-items:center}
+.logo{width:74px;height:74px;border-radius:14px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:800;color:#021026;font-size:22px;box-shadow:0 10px 30px rgba(7,22,38,0.6);border:1px solid rgba(255,255,255,0.06)}
+.title{font-size:22px;margin:0}
+.subtitle{color:var(--muted);margin-top:6px}
+.grid{display:grid;grid-template-columns:1fr 380px;gap:20px;margin-top:18px}
+.card{background:linear-gradient(180deg,var(--panel), #071226);padding:18px;border-radius:14px;border:1px solid var(--card-border);box-shadow:0 8px 30px rgba(2,8,18,0.6)}
+.section{margin-bottom:14px}
+.h2{display:flex;align-items:center;gap:10px;margin:0 0 10px 0}
+.pill{background:var(--glass);padding:6px 10px;border-radius:999px;color:var(--muted);font-size:13px}
+.large{font-size:16px;font-weight:600}
+.list-modern{margin:0;padding:0;list-style:none}
+.list-modern li{padding:10px;border-radius:8px;margin-bottom:8px;display:flex;gap:10px;align-items:start;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005));border:1px solid var(--glass2)}
+.step-number{min-width:36px;height:36px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));display:flex;align-items:center;justify-content:center;font-weight:700}
+.small-muted{color:var(--muted);font-size:13px}
+.code{background:#031427;padding:12px;border-radius:8px;color:#bfe8f8;font-family:monospace;overflow:auto;border:1px solid rgba(255,255,255,0.03);font-size:13px}
+.controls{display:flex;gap:8px;flex-wrap:wrap}
+.btn{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#021026;padding:8px 12px;border-radius:10px;border:none;cursor:pointer;font-weight:600}
+.btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted)}
+.aside .stat{display:flex;align-items:center;justify-content:space-between;padding:12px;border-radius:10px;margin-bottom:10px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005));border:1px solid var(--glass2)}
+.mock-phone{background:linear-gradient(180deg,#03172b,#072033);border-radius:12px;padding:10px;color:var(--muted);box-shadow:inset 0 1px 0 rgba(255,255,255,0.02)}
+.progress{height:8px;background:rgba(255,255,255,0.03);border-radius:8px;overflow:hidden}
+.progress > i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),#7dd3fc)}
+.footer{margin-top:16px;text-align:center;color:var(--muted);font-size:13px}
+.input{background:rgba(255,255,255,0.02);border:1px solid var(--glass2);padding:8px 10px;border-radius:10px;color:#dff4ff;flex:1}
+.accordion{border-radius:8px;overflow:hidden;border:1px solid var(--card-border)}
+.accordion button{all:unset;display:flex;justify-content:space-between;align-items:center;padding:12px;background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent);cursor:pointer}
+.panel{padding:12px;border-top:1px solid var(--card-border);background:linear-gradient(180deg, rgba(0,0,0,0.02), transparent)}
+.checklist{display:grid;gap:8px}
+.check-item{display:flex;gap:10px;align-items:center;padding:8px;border-radius:8px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005));border:1px solid var(--glass2)}
+input[type=checkbox]{width:18px;height:18px}
+@media(max-width:980px){.grid{grid-template-columns:1fr}.aside{order:2}}
+.fade-in{animation:fadeIn .45s ease both}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="logo">ET</div>
+    <div>
+      <h1 class="title">EduTrack — Documentación completa (todo el proyecto, paso a paso)</h1>
+      <div class="subtitle">Manual exhaustivo para construir, publicar y mantener la app. Incluye código ejemplo, política, checklist y plantillas.</div>
+    </div>
+  </div>
+
+  <div class="grid">
+    <main class="card fade-in" id="mainContent">
+
+      <section class="section">
+        <div class="h2"><span class="pill">INTRO</span><div class="large">Qué es EduTrack y alcance del documento</div></div>
+        <p class="small-muted">EduTrack: app para estudiantes de preparatoria que ayuda a llevar control de materias, calcular promedios, detectar materias en riesgo y proyectar notas necesarias. Este documento contiene TODO: planificación, diseño técnico, código de ejemplo (Flutter), extracción local (WebView), publicación, legal y marketing.</p>
+      </section>
+
+      <section class="section">
+        <div class="h2"><span class="pill">DECISIÓN ESTRATÉGICA</span><div class="large">Ruta recomendada</div></div>
+        <p>Para publicar sin problemas legales recomiendo iniciar con <strong>Ruta A — Entrada manual + análisis inteligente</strong>. Esto te permite lanzar rápido, validar el producto con usuarios y luego añadir opciones de extracción local (WebView) como característica opcional para usuarios avanzados con consentimiento.</p>
+      </section>
+
+      <section class="section">
+        <div class="h2"><span class="pill">Fase 1</span><div class="large">Planificación detallada</div></div>
+        <ol class="list-modern">
+          <li class="check-item"><div><strong>Objetivo corto:</strong> "Ayudar a estudiantes a ver en qué materias están en riesgo y cómo recuperarlas."</div></li>
+          <li class="check-item"><div><strong>Público:</strong> estudiantes de prepa (14-18 años), padres y maestros.</div></li>
+          <li class="check-item"><div><strong>MVP:</strong> Login, CRUD materias, cálculo automático, proyección, exportar CSV, sincronización básica.</div></li>
+          <li class="check-item"><div><strong>Funcionalidades post-MVP:</strong> WebView POC, notificaciones, gamificación, comparativo por semestre.</div></li>
+          <li class="check-item"><div><strong>Medida de éxito:</strong> 1000 descargas en 3 meses, tasa de retención 20% después de 30 días, feedback positivo.</div></li>
+        </ol>
+      </section>
+
+      <section class="section">
+        <div class="h2"><span class="pill">Fase 2</span><div class="large">Arquitectura y decisiones técnicas</div></div>
+        <p class="small-muted">Stack recomendado: Flutter (UI), Firebase (Auth, Firestore, Crashlytics), Hive/SQLite (offline), fl_chart (gráficas). Puedes montar un backend en Node/Express si luego quieres procesar datos masivos o servir modelos de ML.</p>
+
+        <div class="h2"><span class="pill">Estructura</span></div>
+        <div class="code">/lib
+  /models
+    subject.dart
+    user.dart
+  /services
+    auth_service.dart
+    db_service.dart
+    calc_service.dart
+  /screens
+    login_screen.dart
+    register_screen.dart
+    home_screen.dart
+    subject_edit.dart
+    projections_screen.dart
+  main.dart
+</div>
+      </section>
+
+      <section class="section">
+        <div class="h2"><span class="pill">Fase 3</span><div class="large">Configuración del entorno (paso a paso)</div></div>
+        <ol class="list-modern">
+          <li class="check-item"><div><strong>Instalar Flutter</strong><div class="small-muted">https://flutter.dev — elige el canal estable y configura PATH.</div></div></li>
+          <li class="check-item"><div><strong>Crear proyecto</strong><div class="small-muted">flutter create edutrack; abrir en VS Code o Android Studio.</div></div></li>
+          <li class="check-item"><div><strong>Añadir dependencias</strong><div class="small-muted">pubspec.yaml: firebase_core, firebase_auth, cloud_firestore, provider, fl_chart, hive, flutter_inappwebview (si haces POC)</div></div></li>
+          <li class="check-item"><div><strong>Configurar Firebase</strong><div class="small-muted">Crear proyecto en console.firebase.google.com; agregar Android (google-services.json) e iOS (GoogleService-Info.plist); habilitar Auth y Firestore.</div></div></li>
+          <li class="check-item"><div><strong>Inicializar en Flutter</strong><div class="small-muted">await Firebase.initializeApp(); en main.dart</div></div></li>
+        </ol>
+      </section>
+
+      <section class="section">
+        <div class="h2"><span class="pill">Fase 4</span><div class="large">Base de datos y modelo de datos</div></div>
+        <p class="small-muted">Diseña la base de datos pensando en sincronización offline y en escalabilidad. Usa Firestore para sincronización automática y Hive/SQLite para cache local.</p>
+        <div class="code">users (collection)
+  {uid} (doc)
+    matricula: string
+    name: string
+    settings: {...}
+    subjects (subcollection)
+      {subjectId}: { name, p1, p2, p3, final, totalClasses, missedClasses, createdAt }
+</div>
+        <p>Los índices y reglas de seguridad de Firestore deben limitar lectura/escritura por uid: only allow users to read/write their own docs.</p>
+      </section>
+
+      <section class="section">
+        <div class="h2"><span class="pill">Fase 5</span><div class="large">Lógica de negocio: cálculos y proyecciones</div></div>
+        <p class="small-muted">Código ejemplo para cálculos (Dart):</p>
+        <div class="code">double average(double p1, double p2, double p3){
+  return (p1 + p2 + p3) / 3.0;
+}
+
+String status(double avg){
+  if(avg >= 70) return 'OK';
+  if(avg >= 60) return 'Riesgo';
+  return 'Peligro';
+}
+
+// Proyección - nota necesaria en parcial faltante
+double neededForTarget(double currentSum, int currentCount, int totalCount, double target){
+  // target is 70 normally
+  final requiredTotal = target * totalCount;
+  return (requiredTotal - currentSum).clamp(0, 100);
+}
+</div>
+        <p class="small-muted">Ajusta si tu prepa usa pesos distintos (por ejemplo parciales 30%, 30%, 40%).</p>
+      </section>
+
+      <section class="section">
+        <div class="h2"><span class="pill">Fase 6</span><div class="large">UI/UX y flujo de pantallas</div></div>
+        <ol class="list-modern">
+          <li class="check-item"><div><strong>Onboarding</strong><div class="small-muted">2 pantallas: qué hace la app y permisos necesarios (notificaciones).</div></div></li>
+          <li class="check-item"><div><strong>Login / Registro</strong><div class="small-muted">Matrícula como identificador (puedes usar matricula@sistema.local para Auth si no quieres correos reales).</div></div></li>
+          <li class="check-item"><div><strong>Dashboard</strong><div class="small-muted">Promedio general, tarjetas de materias con color y acción rápida "Agregar nota".</div></div></li>
+          <li class="check-item"><div><strong>Detalle materia</strong><div class="small-muted">Gráfica de parciales, proyección y botón "Plan de estudio".</div></div></li>
+        </ol>
+      </section>
+
+      <section class="section">
+        <div class="h2"><span class="pill">Fase 7</span><div class="large">POC: extracción local (WebView) — ejemplo de implementación</div></div>
+        <p class="small-muted">Usa esta opción solo para POC y ten en cuenta los riesgos legales. El siguiente ejemplo es para Flutter usando <code>flutter_inappwebview</code>. La app abre SIASE dentro de un WebView; el usuario ingresa sus credenciales en la propia web; tras login inyectas JS para leer DOM y devolver JSON; pide confirmación antes de guardar.</p>
+        <div class="code">// Ejemplo simplificado (no completo)
+
+InAppWebView(
+  initialUrlRequest: URLRequest(url: Uri.parse('https://siase.uanl.mx/login')),
+  onWebViewCreated: (controller){ webController = controller; },
+  onLoadStop: (controller, url) async {
+    // Detectar si estamos en la página de calificaciones
+    if(url.toString().contains('calificaciones')){
+      String js = r"""
+        (function(){
+          // ejemplo: obtener filas de la tabla
+          const rows = Array.from(document.querySelectorAll('.tabla-calificaciones tr'));
+          const subjects = rows.map(r => {
+            const tds = r.querySelectorAll('td');
+            return { name: tds[0]?.innerText?.trim(), p1: tds[1]?.innerText?.trim(), p2: tds[2]?.innerText?.trim(), p3: tds[3]?.innerText?.trim() };
+          }).filter(s=>s.name);
+          return JSON.stringify({subjects});
+        })();
+      """;
+      final result = await controller.evaluateJavascript(source: js);
+      // result is a JSON string — parse and map to model
+    }
+  }
+)
+</div>
+        <p class="small-muted">Importante: Comprueba selectores CSS reales en SIASE, maneja captchas y 2FA con interacción humana y nunca almacenes la contraseña en tu servidor.</p>
+      </section>
+
+      <section class="section">
+        <div class="h2"><span class="pill">Fase 8</span><div class="large">Tests, QA y beta</div></div>
+        <ul class="list-modern">
+          <li class="check-item"><div><strong>Unit tests</strong><div class="small-muted">Prueba funciones de cálculo y modelo Subject.</div></div></li>
+          <li class="check-item"><div><strong>Integration tests</strong><div class="small-muted">Login -> agregar materia -> cálculo -> sincronización.</div></div></li>
+          <li class="check-item"><div><strong>Beta</strong><div class="small-muted">Play Console internal testing y TestFlight para iOS.</div></div></li>
+        </ul>
+      </section>
+
+      <section class="section">
+        <div class="h2"><span class="pill">Fase 9</span><div class="large">Publicación — pasos exactos</div></div>
+        <h4>Google Play</h4>
+        <ol class="list-modern">
+          <li class="check-item"><div><strong>Crear cuenta en Play Console</strong><div class="small-muted">Pago único $25. URL: play.google.com/console</div></div></li>
+          <li class="check-item"><div><strong>Completar ficha</strong><div class="small-muted">Título, descripción, categoría, privacidad, Data Safety.</div></div></li>
+          <li class="check-item"><div><strong>Subir AAB</strong><div class="small-muted">Configurar firma de app, versionCode, versionName.</div></div></li>
+          <li class="check-item"><div><strong>Checklist legal</strong><div class="small-muted">Privacy Policy URL, soporte, contacto.</div></div></li>
+        </ol>
+
+        <h4>Apple App Store</h4>
+        <ol class="list-modern">
+          <li class="check-item"><div><strong>Registrarse en Apple Developer</strong><div class="small-muted">$99/año</div></div></li>
+          <li class="check-item"><div><strong>Preparar build con Xcode</strong><div class="small-muted">Subir con Transporter o Xcode; screenshots para varios dispositivos.</div></div></li>
+          <li class="check-item"><div><strong>Privacidad y cumplimiento</strong><div class="small-muted">Responder preguntas de App Store (data collection) y subir Privacy Policy URL.</div></div></li>
+        </ol>
+      </section>
+
+      <section class="section">
+        <div class="h2"><span class="pill">Fase 10</span><div class="large">Post-publicación y mantenimiento</div></div>
+        <ul class="list-modern">
+          <li class="check-item"><div><strong>Monitoreo</strong><div class="small-muted">Firebase Crashlytics, Analytics.</div></div></li>
+          <li class="check-item"><div><strong>Actualizaciones</strong><div class="small-muted">Corrige bugs y actualiza selectores si usas POC WebView.</div></div></li>
+          <li class="check-item"><div><strong>Atención al usuario</strong><div class="small-muted">Email de soporte y FAQ en la app.</div></div></li>
+        </ul>
+      </section>
+
+      <section class="section">
+        <div class="h2"><span class="pill">Código base: archivos clave (lista y snippets)</div></div>
+        <div class="code">// main.dart (esqueleto)
+import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget{
+  @override
+  Widget build(BuildContext context){
+    return MaterialApp(title: 'EduTrack', home: Scaffold(body: Center(child: Text('EduTrack'))));
+  }
+}
+
+// subject.dart (modelo)
+class Subject{
+  String id; String name; double p1,p2,p3; int total, missed;
+  Subject({required this.id, required this.name, this.p1=0,this.p2=0,this.p3=0,this.total=0,this.missed=0});
+  double get average => (p1+p2+p3)/3.0;
+}
+</div>
+      </section>
+
+      <section class="section">
+        <div class="h2"><span class="pill">Política de privacidad (plantilla)</span><div class="large">Texto listo para usar (adapta nombre y email)</div></div>
+        <div class="code">Política de privacidad - EduTrack
+
+Última actualización: [FECHA]
+
+1. Información que recopilamos
+- Datos de cuenta: matrícula, nombre.
+- Datos académicos: materias, calificaciones, asistencia (ingresadas por el usuario).
+- Datos técnicos: identificadores del dispositivo y errores (Crashlytics).
+
+2. Cómo usamos la información
+- Para mostrar el rendimiento académico y calcular proyecciones.
+- Para mejorar la app y solucionar errores.
+
+3. Compartir datos
+- No vendemos ni compartimos tus datos con terceros salvo si el usuario lo autoriza explícitamente.
+
+4. Seguridad
+- Usamos Firebase y HTTPS. No guardamos contraseñas de sistemas externos (SIASE/Nexus).
+
+5. Menores
+- Si eres menor, pide permiso de tus padres para usar la app.
+
+6. Contacto
+- Email: soporte@edutrack.app
+</div>
+      </section>
+
+      <section class="section">
+        <div class="h2"><span class="pill">Plantilla correo para pedir permiso a DTI / escuela</span><div class="large">Lista para enviar</div></div>
+        <div class="code">Asunto: Solicitud de acceso autorizado a datos académicos para app estudiantil
+
+Estimado/a [Nombre o DTI],
+
+Mi nombre es [Tu nombre], estudiante de [tu plantel]. Estoy desarrollando una aplicación móvil llamada EduTrack que ayuda a estudiantes a visualizar su rendimiento académico y detectar materias en riesgo.
+
+Solicito información sobre la posibilidad de acceder (de forma autorizada y segura) a las calificaciones y asistencias de los alumnos mediante una API o un acuerdo que permita a los usuarios iniciar sesión con sus credenciales y que la escuela autorice la extracción de datos para uso personal. La app no almacenaría contraseñas y respetaría todas las políticas de privacidad.
+
+Quedo atento a sus comentarios.
+
+Atentamente,
+[Tu nombre]
+[Correo]
+</div>
+      </section>
+
+      <section class="section">
+        <div class="h2"><span class="pill">Lista de assets y entregables</span><div class="large">Todo lo que necesitas para publicar</div></div>
+        <ul class="list-modern">
+          <li class="check-item"><div>Íconos en tamaños múltiples (512x512, 1024x1024 para iOS, adaptativos).</div></li>
+          <li class="check-item"><div>Capturas de pantalla para Android e iOS (3-5 por dispositivo).</div></li>
+          <li class="check-item"><div>Descripción corta y larga (en español e inglés).</div></li>
+          <li class="check-item"><div>Política de privacidad pública (URL).</div></li>
+        </ul>
+      </section>
+
+      <section class="section">
+        <div class="h2"><span class="pill">Monetización y ética</span><div class="large">Opciones y recomendaciones</div></div>
+        <ul class="list-modern">
+          <li class="check-item"><div><strong>Gratis + donaciones</strong><div class="small-muted">Sencillo y ético para estudiantes.</div></div></li>
+          <li class="check-item"><div><strong>Freemium</strong><div class="small-muted">Funciones avanzadas (predicciones, histórico) con suscripción.</div></div></li>
+          <li class="check-item"><div><strong>No publicidad intrusiva</strong><div class="small-muted">Si apuntas a menores, evita anuncios dirigidos.</div></div></li>
+        </ul>
+      </section>
+
+      <section class="section">
+        <div class="h2"><span class="pill">Seguridad y cumplimiento (COPPA/GDPR básico)</span><div class="large">Qué debes tener en cuenta</div></div>
+        <ul class="list-modern">
+          <li class="check-item"><div><strong>Menores de edad</strong><div class="small-muted">Si recolectas datos de menores, necesitarás consentimiento parental según la jurisdicción. Incluye opción de eliminar cuenta.</div></div></li>
+          <li class="check-item"><div><strong>Data minimization</strong><div class="small-muted">Recoge solo lo necesario y explícita por qué lo necesitas.</div></div></li>
+        </ul>
+      </section>
+
+      <section class="section">
+        <div class="h2"><span class="pill">CI/CD y deploy</span><div class="large">Automatiza builds</div></div>
+        <div class="code">- GitHub Actions (o Bitrise/Cirrus):
+  * workflow: build-android -> test -> deploy to Play (internal)
+  * workflow: build-ios -> test -> upload to TestFlight (requires mac/os runner)
+
+- Firma: guarda keystore seguro (secrets encrypted)
+</div>
+      </section>
+
+      <section class="section">
+        <div class="h2"><span class="pill">Pruebas de rendimiento y optimización</span><div class="large">Puntos clave</div></div>
+        <ul class="list-modern">
+          <li class="check-item"><div>Minimiza redibujos UI (use const widgets en Flutter).</div></li>
+          <li class="check-item"><div>Cache local y paginación de datos si hay muchas materias.</div></li>
+          <li class="check-item"><div>Usa imágenes optimizadas (WebP) y sprites para assets.</div></li>
+        </ul>
+      </section>
+
+      <section class="section">
+        <div class="h2"><span class="pill">Soporte y FAQ</span><div class="large">Preguntas frecuentes que debes cubrir</div></div>
+        <ul class="list-modern">
+          <li class="check-item"><div><strong>¿Guardan mi contraseña de SIASE?</strong> No. Nunca la almacenamos si usas extracción local; si entras manualmente, solo guardamos lo que tú ingresas.</div></li>
+          <li class="check-item"><div><strong>¿Pueden los profesores ver mis datos?</strong> Solo si tú compartes tu cuenta o habilitas acceso.</div></li>
+          <li class="check-item"><div><strong>¿Qué pasa si SIASE cambia su web?</strong> Si usas POC WebView, la extracción puede romperse; se pedirá actualizar selectores.</div></li>
+        </ul>
+      </section>
+
+      <section class="section">
+        <div class="h2"><span class="pill">FAQ técnico rápido</span><div class="large">Respuestas útiles</div></div>
+        <ul class="list-modern">
+          <li class="check-item"><div><strong>¿Flutter o React Native?</strong> Flutter si quieres UI consistente y rendimiento; React Native si dominas JS.</div></li>
+          <li class="check-item"><div><strong>¿Firebase o backend propio?</strong> Firebase para MVP; backend propio cuando necesites lógica personalizada o ML privado.</div></li>
+          <li class="check-item"><div><strong>¿Cómo manejo el 2FA?</strong> No puedes automatizar 2FA; pide al usuario que complete la verificación manualmente dentro del WebView y luego extrae datos.</div></li>
+        </ul>
+      </section>
+
+      <section class="section">
+        <div class="h2"><span class="pill">Plantillas (descripción para app stores)</span><div class="large">Copiable</div></div>
+        <div class="code">Título: EduTrack - Control de Calificaciones
+
+Descripción corta: Visualiza y proyecta tus calificaciones; detecta materias en riesgo y recibe consejos.
+
+Descripción larga: EduTrack ayuda a estudiantes a llevar control de sus materias. Ingresa tus parciales y asistencias, y la app te mostrará en qué materias estás bien, en riesgo o en peligro de tercera oportunidad. Programa recordatorios, exporta tu progreso y usa proyecciones para saber cuánto necesitas sacar. No almacenamos contraseñas de sistemas externos.
+</div>
+      </section>
+
+      <section class="section">
+        <div class="h2"><span class="pill">Plantilla changelog</span><div class="large">Para tus versiones</div></div>
+        <div class="code">v0.1 - Lanzamiento inicial
+- Login y registro
+- CRUD de materias
+- Cálculo de promedio y estado
+- Exportar CSV
+
+v0.2 - POC WebView
+- Extracción local de datos (opcional)
+- Mejoras en UI
+</div>
+      </section>
+
+    </main>
+
+    <aside class="card aside fade-in">
+      <div class="stat"><div>
+        <div style="font-weight:700">Archivo rápido</div>
+        <div class="small-muted">Todo en un solo HTML interactivo</div>
+      </div><div style="font-weight:800;color:var(--accent)">Descarga/Exporta</div></div>
+
+      <div class="section">
+        <div class="h2"><span class="pill">Acciones</span></div>
+        <div class="controls">
+          <button class="btn" id="exportJSON">Exportar checklist (JSON)</button>
+          <button class="btn ghost" id="copyPlan">Copiar todo (texto)</button>
+          <button class="btn" id="downloadHTML">Descargar HTML</button>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="h2"><span class="pill">Recursos</span></div>
+        <ul class="list-modern">
+          <li class="check-item">Flutter docs: flutter.dev</li>
+          <li class="check-item">Firebase: firebase.google.com</li>
+          <li class="check-item">flutter_inappwebview: pub.dev</li>
+        </ul>
+      </div>
+
+      <div class="section">
+        <div class="h2"><span class="pill">Contacto</span></div>
+        <div class="small-muted">¿Quieres que genere el repo con este contenido + README y código base? Dime y lo creo.</div>
+      </div>
+    </aside>
+  </div>
+
+  <div class="footer">Hecho para tu proyecto personal — EduTrack. Si quieres que lo transforme en PDF, ZIP con código, o incluya el código completo en archivos descargables, dime y lo hago ya.</div>
+</div>
+
+<script>
+// Simple exporter: download this whole HTML
+const exportJSON = document.getElementById('exportJSON');
+const copyPlan = document.getElementById('copyPlan');
+const downloadHTML = document.getElementById('downloadHTML');
+
+exportJSON && exportJSON.addEventListener('click', ()=>{
+  // extract checklist if exists
+  const checklist = {};
+  document.querySelectorAll('.check-item').forEach((el,i)=>{
+    const text = el.innerText.trim(); checklist['item_'+i]=text;
+  });
+  const blob = new Blob([JSON.stringify(checklist, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = 'edutrack_all.json'; a.click(); URL.revokeObjectURL(url);
+});
+
+copyPlan && copyPlan.addEventListener('click', async ()=>{
+  const text = document.getElementById('mainContent').innerText;
+  try{ await navigator.clipboard.writeText(text); alert('Todo el contenido copiado al portapapeles.'); }catch(e){ alert('No se pudo copiar.'); }
+});
+
+downloadHTML && downloadHTML.addEventListener('click', ()=>{
+  const html = '<!doctype html>\n' + document.documentElement.outerHTML;
+  const blob = new Blob([html], {type:'text/html'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = 'edutrack_complete.html'; a.click(); URL.revokeObjectURL(url);
+});
+</script>
+
+</body>
+</html>
