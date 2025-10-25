@@ -1,0 +1,10 @@
+﻿# Windows
+Thumbs.db
+.DS_Store
+
+# Node (si aplica)
+node_modules/
+npm-debug.log
+
+# Env
+.env
